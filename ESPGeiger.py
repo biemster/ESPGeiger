@@ -14,6 +14,8 @@ def init(pwm_pin = 13, pwm_freq = 10000, pwm_duty = 40, event_pin = 5):
 
 def calibrate(duty_start = 45, duty_end = 75, duty_step = 3, t_step = 10):
     steps = len(range(duty_start, duty_end, duty_step))
+    if duty_start < 5: duty_start = 5
+    if duty_end > 95: duty_end = 95
     if t_step < 1: t_step = 1
     print('Calibrating HV in %d steps of %d seconds (%ds total) from duty=%d to duty=%d' % (steps, t_step, steps*t_step, duty_start, duty_end))
     for d in range(duty_start, duty_end, duty_step):
