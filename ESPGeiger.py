@@ -12,7 +12,7 @@ def init(pwm_pin = 13, pwm_freq = 10000, pwm_duty = 40, event_pin = 5):
     discharge = Pin(event_pin, Pin.IN)
     discharge.irq(trigger=Pin.IRQ_FALLING, handler=geiger_discharge_handler)
 
-def calibrate(duty_start = 10, duty_end = 66, duty_step = 3, t_step = 10):
+def calibrate(duty_start = 45, duty_end = 75, duty_step = 3, t_step = 10):
     steps = len(range(duty_start, duty_end, duty_step))
     if t_step < 1: t_step = 1
     print('Calibrating HV in %d steps of %d seconds (%ds total) from duty=%d to duty=%d' % (steps, t_step, steps*t_step, duty_start, duty_end))
