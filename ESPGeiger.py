@@ -3,8 +3,9 @@ import time
 
 cumulative_count = 0
 
-def init(pwm_pin = 13, pwm_freq = 10000, pwm_duty = 66, event_pin = 5):
+def init(pwm_pin = 13, pwm_freq = 10000, pwm_duty = 40, event_pin = 5):
     # PWM for 400V driver (pin13=D7)
+    print('HV pin %d, freq %dkHz, duty %d, event pin %d' % (pwm_pin, pwm_freq/1000, pwm_duty, event_pin))
     pwm = PWM(Pin(pwm_pin), freq=pwm_freq, duty=pwm_duty)
 
     # geiger discharge irq handler (pin5=D1)
