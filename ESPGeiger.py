@@ -14,6 +14,7 @@ def init(pwm_pin = 13, pwm_freq = 10000, pwm_duty = 40, event_pin = 5):
     discharge.irq(trigger=Pin.IRQ_FALLING, handler=geiger_discharge_handler)
 
 def calibrate(duty_start = 25, duty_end = 75, duty_step = 5, t_step = 10):
+    global cumulative_count
     steps = len(range(duty_start, duty_end, duty_step))
     if duty_start < 5: duty_start = 5
     if duty_end > 95: duty_end = 95
@@ -23,7 +24,7 @@ def calibrate(duty_start = 25, duty_end = 75, duty_step = 5, t_step = 10):
         cumulative_count = 0
         init(pwm_duty = d)
         time.sleep(t_step) # NOTE: will this work, or does the whole ESP now sleep (and not register counts?)
-        print('With PWM duty %d we had %d counts per second' % (d, cumulative_count / t_step))
+        print('With PWM duty %d we had %d counts in %d seconds' % (d, cumulative_count, t_step))
 
 def geiger_discharge_handler(p):
     # this handler is called everytime the tube discharges
