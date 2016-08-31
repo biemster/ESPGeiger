@@ -2,6 +2,7 @@ from machine import Pin, PWM
 import time
 
 cumulative_count = 0
+beep = PWM(Pin(14))
 
 def init(pwm_pin = 13, pwm_freq = 10000, pwm_duty = 40, event_pin = 5):
     # PWM for 400V driver (pin13=D7)
@@ -12,7 +13,7 @@ def init(pwm_pin = 13, pwm_freq = 10000, pwm_duty = 40, event_pin = 5):
     discharge = Pin(event_pin, Pin.IN)
     discharge.irq(trigger=Pin.IRQ_FALLING, handler=geiger_discharge_handler)
 
-def calibrate(duty_start = 45, duty_end = 75, duty_step = 3, t_step = 10):
+def calibrate(duty_start = 25, duty_end = 75, duty_step = 5, t_step = 10):
     steps = len(range(duty_start, duty_end, duty_step))
     if duty_start < 5: duty_start = 5
     if duty_end > 95: duty_end = 95
@@ -24,15 +25,12 @@ def calibrate(duty_start = 45, duty_end = 75, duty_step = 3, t_step = 10):
         time.sleep(t_step) # NOTE: will this work, or does the whole ESP now sleep (and not register counts?)
         print('With PWM duty %d we had %d counts per second' % (d, cumulative_count / t_step))
 
-def geiger_discharge_handler():
+def geiger_discharge_handler(p):
     # this handler is called everytime the tube discharges
+    global cumulative_count, beep
+    
     cumulative_count += 1
-    buzz()
 
-def buzz(buzz_pin = 14):
-    # beep buzzer using pwm (pin14=D5)
-    # we can't set a frequency, because freq is shared between all PWM's
-    beep = PWM(Pin(buzz_pin))
     beep.duty(90)
     time.sleep_ms(7) # NOTE: does this pause the PWM too?
     beep.duty(0)
