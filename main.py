@@ -9,15 +9,16 @@ D6 = Pin(12, Pin.OUT)
 
 def click():
     # click the buzzer connected to pins pin14=D5 and pin12=D6
-    print('.', end='')
+    global D5, D6
     D5.high()
     D6.low()
+    print('.', end='')
     time.sleep_ms(2) # use 4 or 5 to get a lower tone
     D5.low()
     D6.high()
 
     # set pins low after click
-    time.sleep_ms(5) # this goes into dead time of the counter
+    time.sleep_ms(2) # this goes into dead time of the counter
     D6.low()
 
 count = 0
