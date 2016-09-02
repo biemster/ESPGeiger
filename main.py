@@ -1,4 +1,5 @@
 from machine import Pin
+import time
 import ESPGeiger as geiger
 
 geiger.init()
