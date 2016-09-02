@@ -1,5 +1,5 @@
 from machine import Pin, PWM
-import time
+import utime
 
 cumulative_count = 0
 
@@ -24,7 +24,7 @@ def calibrate(duty_start = 20, duty_end = 91, duty_step = 10, t_step = 10):
     for d in range(duty_start, duty_end, duty_step):
         cumulative_count = 0
         init(pwm_duty = d)
-        time.sleep(t_step)
+        utime.sleep(t_step)
         print('With PWM duty %d we had %d counts in %d seconds' % (d, cumulative_count, t_step))
 
 def geiger_discharge_handler(p):

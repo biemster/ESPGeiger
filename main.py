@@ -1,5 +1,5 @@
 from machine import Pin
-import time
+import utime
 import ESPGeiger as geiger
 
 geiger.init()
@@ -14,12 +14,12 @@ def click():
     D5.high()
     D6.low()
     print('.', end='')
-    time.sleep_ms(2) # use 4 or 5 to get a lower tone
+    utime.sleep_ms(2) # use 4 or 5 to get a lower tone
     D5.low()
     D6.high()
 
     # set pins low after click
-    time.sleep_ms(2) # this goes into dead time of the counter
+    utime.sleep_ms(2) # this goes into dead time of the counter
     D6.low()
 
 count = 0
