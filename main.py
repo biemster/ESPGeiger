@@ -31,6 +31,7 @@ def click():
 count = 0
 last_tick = utime.ticks_ms()
 curr_tick = utime.ticks_ms()
+CPMlist = list()
 while True:
     # check if a new event happened
     if geiger.cumulative_count > count:
@@ -38,6 +39,11 @@ while True:
         curr_tick = utime.ticks_ms()
         delta_t = utime.ticks_diff(last_tick, curr_tick)
         last_tick = curr_tick
+
+        if delta_t < 120000:
+            CPMlist.append(delta_t)
+            while sum(CPMlist) > 60000: CPMlist.pop(0)
         
         click()
-        mqtt.publish(topic=b"ESPGeiger tick", msg=b'delta t: ' + bytes(str(delta_t), 'ascii') + b'ms')
+        msg = b'(' + bytes(str(len(CPMlist)), 'ascii') + b',' + bytes(str(delta_t), 'ascii') + b')'
+        mqtt.publish(topic=b"ESPGeiger tick", msg=msg)
