@@ -5,6 +5,8 @@ import websocket
 import websocket_helper
 
 CONTENT = b"""\
+HTTP/1.0 200 OK
+
 <!DOCTYPE HTML>
 <html>
   <head> 
@@ -79,7 +81,7 @@ def accept_ws(listen_sock):
 def stop():
     global listen_s, client_s
     uos.dupterm(None)
-    
+
     if listen_s: listen_s.close()
     for cl in client_s: cl.close()
 
