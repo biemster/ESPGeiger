@@ -34,10 +34,10 @@ CONTENT = b"""\
 """
 
 listen_s = None
-client_s = None
+client_s = list()
 
 def send_CPM(msg):
-    client_s.send(msg)
+    for cl in client_s: cl.send(msg)
 
 def setup_conn(port, accept_handler):
     global listen_s
@@ -53,8 +53,8 @@ def setup_conn(port, accept_handler):
         listen_s.setsockopt(socket.SOL_SOCKET, 20, accept_handler)
 
 def accept_html(listen_sock):
-    global client_s
-    client_s, remote_addr = listen_sock.accept()
+    cl, remote_addr = listen_sock.accept()
+    cl.recv(4096) # recv request
     
     for i in (network.AP_IF, network.STA_IF):
         iface = network.WLAN(i)
@@ -62,26 +62,26 @@ def accept_html(listen_sock):
             # Start WebSocket
             port_ws = 5000
             setup_conn(port_ws, accept_ws)
-            client_s.send(CONTENT % (iface.ifconfig()[0], port_ws))
-            client_s.close()
+            cl.send(CONTENT % (iface.ifconfig()[0], port_ws))
+            cl.close()
 
 def accept_ws(listen_sock):
     global client_s
-    client_s, remote_addr = listen_sock.accept()
+    cl, remote_addr = listen_sock.accept()
+    client_s.append(cl)
 
-    websocket_helper.server_handshake(client_s)
-    ws = websocket.websocket(client_s, True)
-    client_s.setblocking(False)
-    client_s.setsockopt(socket.SOL_SOCKET, 20, uos.dupterm_notify)
+    websocket_helper.server_handshake(cl)
+    ws = websocket.websocket(cl, True)
+    cl.setblocking(False)
+    cl.setsockopt(socket.SOL_SOCKET, 20, uos.dupterm_notify)
     uos.dupterm(ws)
 
 def stop():
     global listen_s, client_s
     uos.dupterm(None)
-    if client_s:
-        client_s.close()
-    if listen_s:
-        listen_s.close()
+    
+    if listen_s: listen_s.close()
+    for cl in client_s: cl.close()
 
 def start():
     # Start webserver, on connect start WebSocket
